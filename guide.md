@@ -13,6 +13,7 @@ These modules run in individual docker containers.
 # Directory Structure
 
 docker-ethereum
+```
 - client
 - ethereum
 - server
@@ -21,7 +22,7 @@ docker-ethereum
 - Dockerfile
 - Dockerfile.ganache
 - package.json
-
+```
 
 `Dockerfile.ganache` has instructions to setup and run ganache-cli inside Docker container. Ganache-cli’s default host is `127.0.0.1` but for docker instance it is `0.0.0.0`
 
@@ -30,15 +31,16 @@ docker-ethereum
 ## Directory Structure
 
 Ethereum
+```
 - build
 - contracts
-  - Message.sol
+  - cryptoticket.sol
 - compile.js
 - deploy.js
 - logic.js
 - receipt-ganache.json
 - web3.js
-
+```
 `compile.js` -> compile the .sol smart contract and save the compiled contract in the build folder as .json 
 
 `web3.js` -> work as a bridge between the application and the ethereum network.
@@ -53,11 +55,12 @@ Ethereum
 ## Directory Structure
 
 Server
+```
 - routes
   - contract-API.js
   - smart-contract-API.js
 - index.js
-
+```
 `contract-API.js` -> To compile and deploy the contract we have created APIs instead of manually compiling and deploying it on the network.
 
 `index.js` -> server for ethereum dapp. The server is listening at the port 4000 .
@@ -65,7 +68,7 @@ Server
 
 # Client (React Application)
 
-A component is the building block of any react app. The endpoint is set to `http://localhost:4000` as the server is running at `4000` port. To make any request to server `axios` library is used
+The endpoint is set to `http://localhost:4000` as the server is running at `4000` port. To make any request to server `axios` library is used
 
 
 ## docker-compose.yml

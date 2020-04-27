@@ -935,7 +935,7 @@ contract CryptoTicketSales is Ownable, Pausable, Destructible {
     event Sent(address indexed payee, uint256 amount, uint256 balance);
     event Received(address indexed payer, uint tokenId, uint256 amount, uint256 balance);
 
-    ERC721 public nftAddress = ERC721(address(self));
+    ERC721 public nftAddress;
     uint256 public currentPrice;
     mapping(uint256=>uint256) internal sell_list;
 
@@ -944,10 +944,10 @@ contract CryptoTicketSales is Ownable, Pausable, Destructible {
     * @param _nftAddress address for Crypto Ticket non-fungible token contract 
     * @param _currentPrice initial sales price
     */
-    constructor(uint256 _currentPrice) public { 
-       // require(_nftAddress != address(0) && _nftAddress != address(this));
-      //require(_currentPrice > 0);
-      //nftAddress = ERC721(_nftAddress);
+    constructor(uint256 _currentPrice, address _nftAddress) public { 
+      require(_nftAddress != address(0) && _nftAddress != address(this));
+      require(_currentPrice > 0);
+      nftAddress = ERC721(_nftAddress);
         currentPrice = _currentPrice;
     }
 
