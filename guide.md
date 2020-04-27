@@ -1,4 +1,4 @@
-In the Dapp there will be three modules:
+In Dapp there are three modules:
 ```
     ganache-cli
     Ethereum-Dapp and Server
@@ -6,7 +6,7 @@ In the Dapp there will be three modules:
 ```
 
 
-The above 3 modules will run in individual docker containers.
+These modules run in individual docker containers.
 
 # Project Setup
 
@@ -23,7 +23,7 @@ docker-ethereum
 - package.json
 
 
-Dockerfile.ganache - In this Dockerfile, we’ll write all the instructions to set up and run the ganache-cli inside the container. Ganache-cli’s default host is `127.0.0.1` but for docker instance it is `0.0.0.0`
+`Dockerfile.ganache` has instructions to setup and run ganache-cli inside Docker container. Ganache-cli’s default host is `127.0.0.1` but for docker instance it is `0.0.0.0`
 
 # Ethereum Dapp
 
@@ -45,7 +45,7 @@ Ethereum
 
 `logic.js` -> consists of all the logic to interact with the deployed cryptoticketsales contract on the network.
 
-`deploy.js` -> It will take the compiled contract cryptoticketsales.json and deploy the contract to the network. Initial sale price for 1 crypto ticket is 1000 wei
+`deploy.js` -> Takes compiled contract `cryptoticketsales.json` and deploys it to the network. Initial sale price for 1 crypto ticket is 1000 wei
 
 
 # Server
@@ -65,11 +65,9 @@ Server
 
 # Client (React Application)
 
-A component is the building block of any react app. To create a component it requires Component module from reactthe library. The endpoint is set to `http://localhost:4000` as the server is running at `4000` port.
-
-To make any request to the server axios library is used
+A component is the building block of any react app. The endpoint is set to `http://localhost:4000` as the server is running at `4000` port. To make any request to server `axios` library is used
 
 
-# docker-compose.yml
+## docker-compose.yml
 
-In `docker-compose.yml` are defined configurations for all containers, which can be run with a single command.
+In `docker-compose.yml` are written configurations for all containers which can be run with a single command.
