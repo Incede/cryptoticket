@@ -1,11 +1,12 @@
 const fs = require("fs-extra");
 const {web3} = require("./web3");
-const compileContract = require("./build/cryptoticketsales.json");
+//const compileContract_ticket = require("./build/ticket.json");
+const compileContract = require("./build/sales.json");
 
 // Contract object deployed on network (ganache-cli or testnet or mainnet)
 // network can be selected in web3 file
 
-// cont
+// contract object
 const getContractObject = () => {
     
     const contractReceipt = require("./receipt-ganache.json");
@@ -23,18 +24,18 @@ const buyTicket = async (_tokenId) => {
     const contractObject = getContractObject();
     const receipt = await contractObject.methods
                     .purchaseToken(_tokenId)
-                    .send({from : accounts[1], gas:1000000});
+                    .send({from : accounts[2], gas:1000000});
     console.info(receipt);
     console.info("Purchase Order of ticket successfully submitted!");
     return receipt;
 };
 
-const sellTicket = async () => {
+const sellTicket = async (_tokenId, sale_price) => {
     const contractObject = getContractObject();
     const accounts = await web3.eth.getAccounts();
     const result = await contractObject.methods
-                   .sellToken()
-                   .call({from:accounts[1]});
+                   .sellToken(_tokenId, sale_price)
+                   .call({from:accounts[2]});
     console.log(result);
     return result;
 };

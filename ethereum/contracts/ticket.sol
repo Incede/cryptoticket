@@ -1,5 +1,6 @@
 pragma solidity ^0.4.23;
 
+
 /**
  * @title ERC721 Non-Fungible Token Standard basic interface
  * @dev see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
@@ -79,8 +80,6 @@ contract ERC721Metadata is ERC721Basic {
  */
 contract ERC721 is ERC721Basic, ERC721Enumerable, ERC721Metadata {
 }
-
-
 
 
 contract ERC721Receiver {
@@ -757,16 +756,16 @@ contract Ownable {
 
 
 /**
- * @title CryptoTicket
+ * @title ticket
  * CryptoTicket - a non-fungible token smart contract for 
  * tickets from the SMNT festival
  */
-contract CryptoTicket is ERC721Token, Ownable {
+contract ticket is ERC721Token, Ownable {
 
     // Token id to ticket file hash mapping
     mapping (uint256 => uint256) public tokenIdToHash;
 
-    constructor() ERC721Token("CryptoTicket", "SMNT") public { }
+    constructor() ERC721Token("ticket", "SMNT") public { }
 
     /**
     * @dev Mints a token to an address with a tokenURI and tokenHash.
@@ -857,147 +856,4 @@ contract CryptoTicket is ERC721Token, Ownable {
         return string(bstr);
     }    
 
-}
-
-
-/**
- * @title Pausable
- * @dev Base contract which allows children to implement an emergency stop mechanism.
- */
-contract Pausable is Ownable {
-  event Pause();
-  event Unpause();
-
-  bool public paused = false;
-
-
-  /**
-   * @dev Modifier to make a function callable only when the contract is not paused.
-   */
-  modifier whenNotPaused() {
-    require(!paused);
-    _;
-  }
-
-  /**
-   * @dev Modifier to make a function callable only when the contract is paused.
-   */
-  modifier whenPaused() {
-    require(paused);
-    _;
-  }
-
-  /**
-   * @dev called by the owner to pause, triggers stopped state
-   */
-  function pause() onlyOwner whenNotPaused public {
-    paused = true;
-    emit Pause();
-  }
-
-  /**
-   * @dev called by the owner to unpause, returns to normal state
-   */
-  function unpause() onlyOwner whenPaused public {
-    paused = false;
-    emit Unpause();
-  }
-}
-
-/**
- * @title Destructible
- * @dev Base contract that can be destroyed by owner. All funds in contract will be sent to the owner.
- */
-contract Destructible is Ownable {
-
-  constructor() public payable { }
-
-  /**
-   * @dev Transfers the current balance to the owner and terminates the contract.
-   */
-  function destroy() onlyOwner public {
-    selfdestruct(owner);
-  }
-
-  function destroyAndSend(address _recipient) onlyOwner public {
-    selfdestruct(_recipient);
-  }
-}
-
-
-/**
- * @title CryptoTicketSales
- * CryptoTicketSales - a sales contract for CryptoTicket non-fungible tokens 
- * corresponding to tickets for festival
- */
-contract CryptoTicketSales is Ownable, Pausable, Destructible {
-
-    event Sent(address indexed payee, uint256 amount, uint256 balance);
-    event Received(address indexed payer, uint tokenId, uint256 amount, uint256 balance);
-
-    ERC721 public nftAddress;
-    uint256 public currentPrice;
-    mapping(uint256=>uint256) internal sell_list;
-
-    /**
-    * @dev Contract Constructor
-    * @param _nftAddress address for Crypto Ticket non-fungible token contract 
-    * @param _currentPrice initial sales price
-    */
-    constructor(uint256 _currentPrice, address _nftAddress) public { 
-      require(_nftAddress != address(0) && _nftAddress != address(this));
-      require(_currentPrice > 0);
-      nftAddress = ERC721(_nftAddress);
-        currentPrice = _currentPrice;
-    }
-
-    /**
-    * @dev Purchase _tokenId
-    * @param _tokenId uint256 token ID (ticket number)
-    */
-    function purchaseToken(uint256 _tokenId) public payable whenNotPaused {
-        require(msg.sender != address(0) && msg.sender != address(this));
-        require(msg.value >= currentPrice);
-        require(nftAddress.exists(_tokenId));
-        address tokenSeller = nftAddress.ownerOf(_tokenId);
-        nftAddress.safeTransferFrom(tokenSeller, msg.sender, _tokenId);
-        emit Received(msg.sender, _tokenId, msg.value, address(this).balance);
-    }
-
-    /**
-    * @dev send / withdraw _amount to _payee
-    */
-    function sendTo(address _payee, uint256 _amount) public onlyOwner {
-        require(_payee != address(0) && _payee != address(this));
-        require(_amount > 0 && _amount <= address(this).balance);
-        _payee.transfer(_amount);
-        emit Sent(_payee, _amount, address(this).balance);
-    }    
-
-    /**
-    * @dev Updates _currentPrice
-    * @dev Throws if _currentPrice is zero
-    */
-    function setCurrentPrice(uint256 _currentPrice) public onlyOwner {
-        require(_currentPrice > 0);
-        require(_currentPrice*10<=currentPrice*11);   // max sale price = 110% price of previous sale
-        currentPrice = _currentPrice;
-    }        
-
-    // option for ticket owners to sell tickets in secondary markets
-    function sellToken(uint256 _tokenId, uint256 sale_price) public onlyOwner{
-        require(sale_price*10<=currentPrice*11 || sale_price*10<=sell_list[_tokenId]*11);   // max sale price = 110% price of previous sale
-        sell_list[_tokenId]=sale_price;
-    }
-
-    // secondary market sales
-    function buyToken(uint256 _tokenId) public payable {
-        require(msg.sender != address(0) && msg.sender != address(this));
-        require(msg.value >= sell_list[_tokenId]);
-        require(nftAddress.exists(_tokenId));
-        address tokenSeller = nftAddress.ownerOf(_tokenId);
-        nftAddress.safeTransferFrom(tokenSeller, msg.sender, _tokenId);
-        emit Received(msg.sender, _tokenId, msg.value, address(this).balance);
-        sendTo(tokenSeller, sell_list[_tokenId]/10);   // 10% of value of ticket sales in the secondary market goes to the organizer as monetization
-    }
 }
