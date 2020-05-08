@@ -12,8 +12,8 @@ class Order extends Component {
             output : []
         };
         this.onChange = this.onChange.bind(this);
-        this.onsubmitsetmsg = this.onsubmitsetmsg.bind(this);
-        this.onsubmitgetmsg = this.onsubmitgetmsg.bind(this);
+        this.onsubmitbuyticket = this.onsubmitbuyticket.bind(this);
+        this.onsubmitsellticket = this.onsubmitsellticket.bind(this);
         this.onsubmitcompile = this.onsubmitcompile.bind(this);
         this.onsubmitdeploy = this.onsubmitdeploy.bind(this);
     }
@@ -43,9 +43,9 @@ class Order extends Component {
         })
     };
 
-    // on click of Set Order button send the POST request to the localhost:4000/ 
-    // with the order to set in the smart contract 
-    onsubmitsetmsg = () => {
+    // on click of Buy Ticket button send the POST request to the localhost:4000/ 
+    // with the ticket id to buy in the smart contract 
+    onsubmitbuyticket = () => {
         axios.post(endpoint + "/", {
             order: this.state.order 
         }).then(res => {
@@ -55,10 +55,12 @@ class Order extends Component {
         })
     };
 
-    // on click of Get Order button send the GET request to the localhost:4000/
-    // to fetch the order from the smart contract 
-    onsubmitgetmsg = () => {
-        axios.get(endpoint + "/").then(res => {
+    // on click of Sell Ticket button send the POST request to the localhost:4000/
+    // with the ticket id to sell in the smart contract 
+    onsubmitsellticket = () => {
+        axios.post(endpoint + "/", {
+            order: this.state.order
+        }).then(res => {
             this.setState({
                 output: res.data
             });
@@ -71,29 +73,39 @@ class Order extends Component {
       <fieldset>
           <form>
               <div>
+                <label htmlFor="tokenid">tokenid</label>
                 <input
-                    type="name"
+                    type="tokenid"
                     className="ghost-input"
-                    placeholder="set order"
-                    name="setOrder"
-                    value={this.state.setOrder}
+                    placeholder="set token id"
+                    name="settokenid"
+                    value={this.state.settokenid}
                     onChange={this.onChange}
                 />
+
+                <label htmlFor="saleprice">saleprice</label>
+                <input
+                    type="saleprice"
+                    name="saleprice"
+                    value={this.state.saleprice}
+                    onChange={this.handleChange}
+                />
+
                 <button
                   type="button"
                   className="ghost-button"
-                  onClick={this.onsubmitsetmsg}
+                  onClick={this.onsubmitbuyticket}
                 >
-                  Set Order
+                  Buy Ticket
                 </button>
               </div>
               <div>
               <button
                   type="button"
                   className="ghost-button"
-                  onClick={this.onsubmitgetmsg}
+                  onClick={this.onsubmitsellticket}
                 >
-                  Get Order
+                  Sell Ticket
                 </button>
               </div>
               <div>

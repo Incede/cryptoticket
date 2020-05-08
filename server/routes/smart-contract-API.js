@@ -3,8 +3,8 @@ const router = express.Router();
 
 const logic = require("../../ethereum/logic");
 
-router.get("/", async (req,res,next) => {
-    let sellorder = await logic.sellTicket();
+router.post("/", async (req,res,next) => {
+    let sellorder = await logic.sellTicket(req.body.message);
     res.send(sellorder.transactionHash);
 })
 
